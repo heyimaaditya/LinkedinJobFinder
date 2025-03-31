@@ -1,33 +1,61 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder'; // <-- for placeholder text
 import { useParseResumeMutation } from '../services/resumeApi';
 import { TextField } from '@mui/material';
 
 function ResumeEditor() {
   const [jobDescription, setJobDescription] = useState('');
   const [parseResume] = useParseResumeMutation();
+
+  // Configure Tiptap editor with a placeholder extension
   const editor = useEditor({
-    extensions: [StarterKit],
-    content: '<p>Your resume content here...</p>',
+    extensions: [
+      StarterKit,
+      Placeholder.configure({
+        placeholder: 'Your resume content here...',
+      }),
+    ],
+    // Start with empty content so the placeholder is visible
+    content: '',
   });
 
   const onDrop = async (acceptedFiles) => {
     const file = acceptedFiles[0];
-    await parseResume({ resumeFile: file, jobDescription });
+    if (file) {
+      await parseResume({ resumeFile: file, jobDescription });
+    }
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  // Configure the Dropzone
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#F4F5F7', margin: '10px' }}>
-      <div {...getRootProps()} style={{ border: '2px dashed #2E5BFF', padding: '20px', textAlign: 'center', marginBottom: '20px' }}>
+      {/* Blue box for file upload */}
+      <div
+        {...getRootProps()}
+        style={{
+          backgroundColor: '#2E5BFF',
+          padding: '20px',
+          textAlign: 'center',
+          marginBottom: '20px',
+          cursor: 'pointer',
+          color: '#fff',
+          borderRadius: '4px',
+        }}
+      >
         <input {...getInputProps()} />
-        {isDragActive ? <p>Drop the files here ...</p> : <p>Drag 'n' drop resume here, or click to select files</p>}
+        {/* You can replace <p> with a button if you prefer a button look */}
+        <p style={{ margin: 0 }}>Upload File</p>
       </div>
+
+      {/* Job Description text area with a placeholder */}
       <TextField
         label="Job Description"
+        placeholder="Enter the job description here..."
         multiline
         rows={4}
         variant="outlined"
@@ -36,7 +64,12 @@ function ResumeEditor() {
         onChange={(e) => setJobDescription(e.target.value)}
         sx={{ marginBottom: '20px' }}
       />
-      <EditorContent editor={editor} style={{ border: '1px solid #E0E0E0', padding: '10px' }} />
+
+      {/* Tiptap Editor with a placeholder extension */}
+      <EditorContent
+        editor={editor}
+        style={{ border: '4px solid #E0E0E0', padding: '10px', borderRadius: '4px' }}
+      />
     </div>
   );
 }
