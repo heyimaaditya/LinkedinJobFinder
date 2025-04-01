@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Placeholder from '@tiptap/extension-placeholder'; // <-- for placeholder text
+import Placeholder from '@tiptap/extension-placeholder'; 
 import { useParseResumeMutation } from '../services/resumeApi';
 import { TextField } from '@mui/material';
 
@@ -48,7 +48,7 @@ function ResumeEditor() {
         }}
       >
         <input {...getInputProps()} />
-        {/* You can replace <p> with a button if you prefer a button look */}
+        
         <p style={{ margin: 0 }}>Upload File</p>
       </div>
 
